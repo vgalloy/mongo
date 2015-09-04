@@ -1,8 +1,6 @@
 package com.vgalloy.mongo.dao;
 
 import com.vgalloy.mongo.dao.impl.UserDaoImpl;
-import com.vgalloy.mongo.manager.UserManager;
-import com.vgalloy.mongo.manager.impl.UserManagerImpl;
 import com.vgalloy.mongo.model.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,64 +15,61 @@ import static junit.framework.Assert.assertTrue;
 public class TestUserDao {
 
     private static UserDao dao = UserDaoImpl.getInstance();
-    private UserManager userManager = UserManagerImpl.getInstance();
-    private User user;
+    private User person;
 
     @Before
     public void init() {
         dao.removeAll();
-        user = new User();
-        user.setId(userManager.getNextId());
-        user.setName("test");
-        user.setAge(99);
+        person = new User();
+        person.setName("test");
+        person.setAge(99);
     }
 
     @Test
     public void testCreate() {
         int number = dao.getAll().size();
-        dao.create(user);
+        dao.create(person);
         assertEquals("Object not add", number + 1, dao.getAll().size());
-        assertNotNull("Null id", user.getId());
+        assertNotNull("Null id", person.getId());
     }
 
     @Test
     public void testGetById() {
-        dao.create(user);
-        User result = dao.getById(user.getId());
-        assertEquals(user, result);
+        dao.create(person);
+        User result = dao.getById(person.getId());
+        assertEquals(person, result);
     }
 
     @Test
-    public void testGetAll(){
-        User user2 = new User();
-        user2.setId(userManager.getNextId());
-        user2.setName("test_all");
-        user2.setAge(65);
+    public void testGetAll() {
+        User person2 = new User();
+        person2.setName("test_all");
+        person2.setAge(65);
 
-        dao.create(user);
-        dao.create(user2);
+        dao.create(person);
+        dao.create(person2);
 
-        List<User> userList = dao.getAll();
-        assertTrue(userList.size() >= 2);
-        assertTrue(userList.contains(user));
-        assertTrue(userList.contains(user2));
+        List<User> personList = dao.getAll();
+        assertTrue(personList.size() >= 2);
+        assertTrue(personList.contains(person));
+        assertTrue(personList.contains(person2));
     }
 
     @Test
     public void testDelete() {
-        dao.create(user);
+        dao.create(person);
         int number = dao.getAll().size();
-        dao.delete(user.getId());
+        dao.delete(person.getId());
         assertEquals("Object not delete", number - 1, dao.getAll().size());
     }
 
     @Test
     public void testUpdate() {
-        dao.create(user);
-        user.setAge(98);
-        user.setName("toto");
-        dao.update(user);
-        User result = dao.getById(user.getId());
-        assertEquals(user, result);
+        dao.create(person);
+        person.setAge(98);
+        person.setName("toto");
+        dao.update(person);
+        User result = dao.getById(person.getId());
+        assertEquals(person, result);
     }
 }

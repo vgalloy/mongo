@@ -3,12 +3,11 @@ package com.vgalloy.mongo.dao.impl;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.vgalloy.mongo.dao.UserDao;
 import com.vgalloy.mongo.factory.DBFactory;
-import com.vgalloy.mongo.mapper.UserMapper;
 import com.vgalloy.mongo.model.User;
+import org.mongojack.JacksonDBCollection;
+import org.mongojack.WriteResult;
 
 import java.util.List;
 
@@ -16,13 +15,15 @@ public enum UserDaoImpl implements UserDao {
     INSTANCE;
 
     public static final String DATABASE = "Example";
-    public static final String COLLECTION = "user";
+    public static final String COLLECTION = "people";
 
     private final DBCollection dbCollection;
+    private final JacksonDBCollection<User, String> collection;
 
     UserDaoImpl() {
         DB database = DBFactory.getDatabase(DATABASE);
         dbCollection = database.getCollection(COLLECTION);
+        collection = JacksonDBCollection.wrap(dbCollection, User.class, String.class);
     }
 
     /**
@@ -36,36 +37,28 @@ public enum UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAll() {
-        DBCursor dbCursor = dbCollection.find();
-        return UserMapper.toJavaObjectList(dbCursor.toArray());
+        return collection.find().toArray();
     }
 
     @Override
     public void create(User element) {
-        DBObject person = UserMapper.toDBObject(element);
-        dbCollection.insert(person);
+        WriteResult writeResult = collection.insert(element);
+        element.setId(writeResult.getSavedId().toString());
     }
 
     @Override
-    public User getById(Long id) {
-        BasicDBObject query = new BasicDBObject();
-        query.put("id", id);
-        DBObject dbObject = dbCollection.findOne(query);
-        return UserMapper.toJavaObject(dbObject);
+    public User getById(String id) {
+        return collection.findOneById(id);
     }
 
     @Override
     public void update(User element) {
-        DBObject person = UserMapper.toDBObject(element);
-        BasicDBObject searchQuery = new BasicDBObject().append("id", element.getId());
-        dbCollection.update(searchQuery, person);
+        collection.save(element);
     }
 
     @Override
-    public void delete(Long id) {
-        BasicDBObject query = new BasicDBObject();
-        query.put("id", id);
-        dbCollection.remove(query);
+    public void delete(String id) {
+        collection.removeById(id);
     }
 
     @Override

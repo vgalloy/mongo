@@ -23,7 +23,7 @@ public interface Dao<T> {
      * @param id The id of the item
      * @return The element matching with the id
      */
-    T getById(Long id);
+    T getById(String id);
 
     /**
      * Update an element according an id.
@@ -37,7 +37,7 @@ public interface Dao<T> {
      *
      * @param id The id of the element to delete
      */
-    void delete(Long id);
+    void delete(String id);
 
     /**
      * Remove all the entities in the table.

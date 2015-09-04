@@ -1,16 +1,21 @@
 package com.vgalloy.mongo.model;
 
+import org.mongojack.Id;
+import org.mongojack.ObjectId;
+
 public class User {
 
-    private Long id;
+    @Id
+    @ObjectId
+    private String id;
     private String name;
     private int age;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
