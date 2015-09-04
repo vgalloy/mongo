@@ -1,12 +1,12 @@
 package com.vgalloy.mongo.model;
 
-import org.mongojack.Id;
-import org.mongojack.ObjectId;
+import org.jongo.marshall.jackson.oid.MongoId;
+import org.jongo.marshall.jackson.oid.MongoObjectId;
 
 public class User {
 
-    @Id
-    @ObjectId
+    @MongoId
+    @MongoObjectId
     private String id;
     private String name;
     private int age;

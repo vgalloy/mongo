@@ -14,6 +14,8 @@
         <!-- Mongo -->
         <mongo-java-driver-version>3.2.2</mongo-java-driver-version>
         <mongojack-version>2.3.0</mongojack-version>
+        <jongo-version>1.2</jongo-version>
+        <junit-version>4.12</junit-version>
     </properties>
 
     <dependencies>
@@ -23,14 +25,14 @@
             <version>${mongo-java-driver-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mongojack</groupId>
-            <artifactId>mongojack</artifactId>
-            <version>${mongojack-version}</version>
+            <groupId>org.jongo</groupId>
+            <artifactId>jongo</artifactId>
+            <version>${jongo-version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit-version}</version>
         </dependency>
     </dependencies>
     <build>
