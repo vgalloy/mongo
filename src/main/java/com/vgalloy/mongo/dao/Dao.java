@@ -43,4 +43,11 @@ public interface Dao<T> {
      * Remove all the entities in the table.
      */
     void removeAll();
+
+    /**
+     * Remove entities with the id specify.
+     *
+     * @param idList The id List of remove
+     */
+    void remove(List<String> idList);
 }

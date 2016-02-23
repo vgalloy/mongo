@@ -1,8 +1,9 @@
 package com.vgalloy.mongo.dao.impl;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
-import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.vgalloy.mongo.dao.UserDao;
 import com.vgalloy.mongo.factory.DBFactory;
 import com.vgalloy.mongo.model.User;
@@ -14,6 +15,7 @@ import org.jongo.MongoCursor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum UserDaoImpl implements UserDao {
     INSTANCE;
@@ -21,12 +23,10 @@ public enum UserDaoImpl implements UserDao {
     public static final String DATABASE = "Example";
     public static final String COLLECTION = "people";
 
-    private final DBCollection dbCollection;
     private final MongoCollection collection;
 
     UserDaoImpl() {
         DB database = DBFactory.getDatabase(DATABASE);
-        dbCollection = database.getCollection(COLLECTION);
         Jongo jongo = new Jongo(database);
         collection = jongo.getCollection(COLLECTION);
     }
@@ -42,7 +42,7 @@ public enum UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAll() {
-        MongoCursor<User> mongoCursor =  collection.find().as(User.class);
+        MongoCursor<User> mongoCursor = collection.find().as(User.class);
         Iterator<User> personIterator = mongoCursor.iterator();
         List<User> copy = new ArrayList<>();
         while (personIterator.hasNext()) {
@@ -72,8 +72,17 @@ public enum UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void removeAll(){
-        dbCollection.remove(new BasicDBObject());
+    public void removeAll() {
+        collection.remove();
     }
 
+    @Override
+    public void remove(List<String> idList) {
+        List<ObjectId> listObjectId = idList.stream().map(ObjectId::new).collect(Collectors.toList());
+        BasicDBList docIds = new BasicDBList();
+        docIds.addAll(listObjectId);
+        DBObject inClause = new BasicDBObject("$in", docIds);
+        DBObject query = new BasicDBObject("_id", inClause);
+        collection.remove(query.toString());
+    }
 }
